@@ -33,13 +33,13 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
 
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.inMemory().withClient("web_app").scopes("FOO").autoApprove(true).authorities("FOO_READ", "FOO_WRITE")
+		clients.inMemory().withClient("web_app").autoApprove(true).scopes("foo").authorities("FOO_READ", "FOO_WRITE")
 				.authorizedGrantTypes("implicit", "refresh_token", "password", "authorization_code");
 	}
 
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		endpoints.tokenStore(tokenStore()).tokenEnhancer(jwtTokenEnhancer())
+		endpoints.tokenStore(tokenStore()).tokenEnhancer(tokenConverter())
 				.authenticationManager(this.authenticationManager);
 	}
 
@@ -49,11 +49,11 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
 
 	@Bean
 	public TokenStore tokenStore() {
-		return new JwtTokenStore(jwtTokenEnhancer());
+		return new JwtTokenStore(tokenConverter());
 	}
 
 	@Bean
-	protected JwtAccessTokenConverter jwtTokenEnhancer() {
+	protected JwtAccessTokenConverter tokenConverter() {
 		KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(jwtFile, "mySecretKey".toCharArray());
 		JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
 		converter.setKeyPair(keyStoreKeyFactory.getKeyPair("jwt"));

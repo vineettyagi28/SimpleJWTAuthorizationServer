@@ -3,6 +3,7 @@
  */
 package com.scopeweaver.auth.model;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class User implements UserDetails {
 	private String name;
 	private String username;
 	private String password;
-	private List<GrantedAuthority> authorities;
+	private List<String> authorities;
 
 	public User(String name, String username, String password) {
 		this.name = name;
@@ -44,14 +45,14 @@ public class User implements UserDetails {
 		this.name = name;
 		this.username = username;
 		this.password = password;
-		this.authorities = AuthorityUtils.createAuthorityList(grantedAuthorities);
+		this.authorities = Arrays.asList(grantedAuthorities);
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		return AuthorityUtils.createAuthorityList(authorities.toArray(new String[0]));
 	}
-
+	
 	@Override
 	public String getPassword() {
 		return password;
